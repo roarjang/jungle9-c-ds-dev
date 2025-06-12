@@ -1,0 +1,22 @@
+# macOS
+.DS_Store
+
+# VSCode
+.vscode/
+
+# Build artifacts
+*.o
+*.out
+a.out
+*.exe
+
+# Logs
+*.log
+
+# Python cache (in case)
+__pycache__/
+*.pyc
+
+# Devcontainer volume mounts (optional)
+*.devcontainer/*
+!*.devcontainer/devcontainer.json
