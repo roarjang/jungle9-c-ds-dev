@@ -39,6 +39,7 @@ int removeNode(LinkedList *ll, int index);
 int main()
 {
 	int c, i;
+	c = 1;
 	LinkedList ll;
 	LinkedList resultFrontList, resultBackList;
 
@@ -102,128 +103,123 @@ int main()
 
 void frontBackSplitLinkedList(LinkedList *ll, LinkedList *resultFrontList, LinkedList *resultBackList)
 {
-	/* add your code here */
+	if (ll == NULL || ll->head == NULL)
+		return;
+
+	int frontSize = (ll->size + 1) / 2;
+	ListNode *cur = ll->head;
+	
+	for (int i = 0; i < ll->size; i++) {
+		LinkedList *targetList = (i < frontSize) ? resultFrontList : resultBackList;
+
+		if (insertNode(targetList, targetList->size, cur->item) == -1)
+			return;
+
+		cur = cur->next;
+	}
+
+	removeAllItems(ll);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
 
-void printList(LinkedList *ll){
-
-	ListNode *cur;
+void printList(LinkedList *ll) {
 	if (ll == NULL)
 		return;
-	cur = ll->head;
-	if (cur == NULL)
-		printf("Empty");
-	while (cur != NULL)
-	{
+
+	if (ll->head == NULL) {
+		printf("Empty\n");
+		return;
+	}
+	
+	ListNode *cur = ll->head;
+
+	while (cur != NULL) {
 		printf("%d ", cur->item);
 		cur = cur->next;
 	}
 	printf("\n");
 }
 
+void removeAllItems(LinkedList *ll) {
+	if (ll == NULL || ll->head == NULL)
+		return;
 
-void removeAllItems(LinkedList *ll)
-{
 	ListNode *cur = ll->head;
-	ListNode *tmp;
-
-	while (cur != NULL){
-		tmp = cur->next;
-		free(cur);
-		cur = tmp;
+	while (cur != NULL) {
+		ListNode *toDelete = cur;
+		cur = cur->next;
+		free(toDelete);
 	}
 	ll->head = NULL;
 	ll->size = 0;
 }
 
-
-ListNode * findNode(LinkedList *ll, int index){
-
-	ListNode *temp;
-
-	if (ll == NULL || index < 0 || index >= ll->size)
+ListNode *findNode(LinkedList *ll, int index) {
+	if (ll == NULL || ll->head == NULL || index < 0 || index >= ll->size)
 		return NULL;
 
-	temp = ll->head;
+	if (index == 0)
+		return ll->head;
 
-	if (temp == NULL || index < 0)
-		return NULL;
-
-	while (index > 0){
-		temp = temp->next;
-		if (temp == NULL)
-			return NULL;
-		index--;
+	ListNode *cur = ll->head;
+	for (int i = 0; i < index; i++) {
+		cur = cur->next;
 	}
 
-	return temp;
+	return cur;
 }
 
-int insertNode(LinkedList *ll, int index, int value){
-
-	ListNode *pre, *cur;
-
-	if (ll == NULL || index < 0 || index > ll->size + 1)
+int insertNode(LinkedList *ll, int index, int value) {
+	if (ll == NULL || index < 0 || index > ll->size)
 		return -1;
 
-	// If empty list or inserting first node, need to update head pointer
-	if (ll->head == NULL || index == 0){
-		cur = ll->head;
-		ll->head = malloc(sizeof(ListNode));
-		ll->head->item = value;
-		ll->head->next = cur;
-		ll->size++;
-		return 0;
+	ListNode *newNode = malloc(sizeof(ListNode));
+	if (newNode == NULL) {
+		return -1;
 	}
 
-	// Find the nodes before and at the target position
-	// Create a new node and reconnect the links
-	if ((pre = findNode(ll, index - 1)) != NULL){
-		cur = pre->next;
-		pre->next = malloc(sizeof(ListNode));
-		pre->next->item = value;
-		pre->next->next = cur;
-		ll->size++;
-		return 0;
-	}
+	newNode->item = value;
+	newNode->next = NULL;
 
-	return -1;
+	if (index == 0) {
+		newNode->next = ll->head;
+		ll->head = newNode;
+	} else {
+		ListNode *pre = findNode(ll, index -1);
+		if (pre == NULL) {
+			free(newNode);
+			return -1;
+		}
+
+		newNode->next = pre->next;
+		pre->next = newNode;
+	}
+	ll->size++;
+
+	return 0;
 }
 
-
-int removeNode(LinkedList *ll, int index){
-
-	ListNode *pre, *cur;
-
-	// Highest index we can remove is size-1
-	if (ll == NULL || index < 0 || index >= ll->size)
+int removeNode(LinkedList *ll, int index) {
+	if (ll == NULL || ll->head == NULL || index < 0 || index >= ll->size)
 		return -1;
 
-	// If removing first node, need to update head pointer
-	if (index == 0){
-		cur = ll->head->next;
-		free(ll->head);
-		ll->head = cur;
-		ll->size--;
+	ListNode *toDelete;
 
-		return 0;
-	}
-
-	// Find the nodes before and after the target position
-	// Free the target node and reconnect the links
-	if ((pre = findNode(ll, index - 1)) != NULL){
-
-		if (pre->next == NULL)
+	if (index == 0) {
+		toDelete = ll->head;
+		ll->head = toDelete->next;
+	} else {
+		ListNode *pre = findNode(ll, index - 1);
+		if (pre == NULL || pre->next == NULL)
 			return -1;
 
-		cur = pre->next;
-		pre->next = cur->next;
-		free(cur);
-		ll->size--;
-		return 0;
+		toDelete = pre->next;
+		pre->next = toDelete->next;
 	}
+	toDelete->next = NULL; // optional: dangling pointer 예방
+	free(toDelete);
+	ll->size--;
 
-	return -1;
+	return 0;
 }
