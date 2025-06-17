@@ -153,7 +153,7 @@ void removeOddValues(Queue *q) {
 	return;
 }
 
-// 값만 보고 새 리스트로 복사 - 1
+// 값만 보고 새 리스트로 복사 - 1 (구조체 사용)
 // void removeOddValues(Queue *q) {
 // 	if (q == NULL || q->ll.head == NULL)
 // 		return;
@@ -279,40 +279,42 @@ void removeOddValues(Queue *q) {
 
 //////////////////////////////////////////////////////////////////////////////////
 
+// Insert an item at the end of the queue
 void enqueue(Queue *q, int item) {
+	if (q == NULL)
+		return;
+
 	insertNode(&(q->ll), q->ll.size, item);
 }
 
+// Remove and return the front item of the queue
 int dequeue(Queue *q) {
-	int item;
+	if (isEmptyQueue(q))
+		return -1;
+	
+	int item = q->ll.head->item;
+	removeNode(&(q->ll), 0);
 
-	if (!isEmptyQueue(q)) {
-		item = ((q->ll).head)->item;
-		removeNode(&(q->ll), 0);
-		return item;
-	}
-	return -1;
+	return item;
 }
 
+// Check if the queue is empty
 int isEmptyQueue(Queue *q) {
-	if ((q->ll).size == 0)
-		return 1;
-	return 0;
+	return (q == NULL || q->ll.head == NULL);
 }
 
-void removeAllItemsFromQueue(Queue *q)
-{
-	int count, i;
-	if (q == NULL)
+// Remove all items from the queue
+void removeAllItemsFromQueue(Queue *q) {
+	if (isEmptyQueue(q))
 		return;
-	count = q->ll.size;
 
-	for (i = 0; i < count; i++)
+	int count = q->ll.size;
+	for (int i = 0; i < count; i++) {
 		dequeue(q);
+	}
 }
 
-
-void printList(LinkedList *ll){
+void printList(LinkedList *ll) {
 
 	ListNode *cur;
 	if (ll == NULL)
