@@ -103,9 +103,21 @@ int main()
 
 //////////////////////////////////////////////////////////////////////////////////
 
-void mirrorTree(BTNode *node)
-{
-	/* add your code here */
+// Recursively converts a binary tree into its mirror image
+void mirrorTree(BTNode *node) {
+    if (node == NULL)
+        return;
+
+    // Recursively mirror the left and right subtrees first
+    mirrorTree(node->left);
+    mirrorTree(node->right);
+
+    // Swap the left and right children of the current node
+    BTNode *temp = node->left;
+    node->left = node->right;
+    node->right = temp;
+
+    return;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
