@@ -370,6 +370,7 @@ ListNode *findNode(LinkedList *ll, int index){
 
 int insertNode(LinkedList *ll, int index, int value){
 
+	ListNode *ok = malloc(sizeof(ListNode));
 	ListNode *pre, *cur;
 
 	if (ll == NULL || index < 0 || index > ll->size + 1)

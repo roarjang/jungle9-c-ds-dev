@@ -85,9 +85,21 @@ int main()
 
 ////////////////////////////////////////////////////////////////////////
 
-void RecursiveReverse(ListNode **ptrHead)
-{
-	/* add your code here */
+void RecursiveReverse(ListNode **ptrHead) {
+	ListNode *currPtr = *ptrHead;
+
+	// base case: 리스트가 비었거나 마지막 노드에 도달한 경우
+	if (currPtr == NULL || currPtr->next == NULL) {
+		return;
+	}
+
+	// 재귀 전에 *ptrHead를 다음 노드로 갱신 -> 마지막 노드를 기억
+	*ptrHead = currPtr->next;
+	RecursiveReverse(ptrHead);
+
+	// 링크 방향을 반대로 연결
+	currPtr->next->next = currPtr;
+	currPtr->next = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
